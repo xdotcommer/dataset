@@ -10,7 +10,6 @@ Cucumber::Rails::World.class_eval do
 end
 
 describe Cucumber::Rails::World do
-  # include SandboxedOptions
   
   it 'should have a dataset method' do
     world = Class.new(Cucumber::Rails::World)
@@ -25,18 +24,18 @@ describe Cucumber::Rails::World do
       end
     end
     
-    Cucumber::Rails::World.class_eval do
-      dataset(my_dataset)
-    end
-    
     step_mother = Object.new
     step_mother.extend(Cucumber::StepMother)
-    $x = $y = nil
-    step_mother.Given /y is (\d+)/ do |n|
-      $y = n.to_i
+    $__cucumber_toplevel = step_mother
+    step_mother.World do |world|
+      world = Cucumber::Rails::World.new
+      world.class.dataset(my_dataset)
+      world
+    end
+    step_mother.Given /true is true/ do |n|
+      true.should == true
     end
     visitor = Cucumber::Ast::Visitor.new(step_mother)
-    visitor.options = {}
     
     scenario = Cucumber::Ast::Scenario.new(
       background=nil,
@@ -46,7 +45,7 @@ describe Cucumber::Rails::World do
       keyword="",
       name="", 
       steps=[
-        Cucumber::Ast::Step.new(8, "Given", "y is 5")
+        Cucumber::Ast::Step.new(8, "Given", "true is true")
       ])
     visitor.visit_feature_element(scenario)
     
