@@ -4,7 +4,7 @@ module Dataset
     # A mechanism to cache information about an ActiveRecord class to speed
     # things up a bit for insertions, finds, and method generation.
     class Meta # :nodoc:
-      if (Rails::VERSION::MAJOR > 2 || (Rails::VERSION::MAJOR == 2 && Rails::VERSION::MINOR >= 3)
+      if (Rails::VERSION::MAJOR > 2 || (Rails::VERSION::MAJOR == 2 && Rails::VERSION::MINOR >= 3))
         ACTIVE_RECORD_DESCENDANTS_METHOD = :self_and_descendants_from_active_record
       else
         ACTIVE_RECORD_DESCENDANTS_METHOD = :self_and_descendents_from_active_record
