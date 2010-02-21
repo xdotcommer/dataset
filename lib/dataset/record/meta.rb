@@ -4,6 +4,13 @@ module Dataset
     # A mechanism to cache information about an ActiveRecord class to speed
     # things up a bit for insertions, finds, and method generation.
     class Meta # :nodoc:
+      if (Rails::VERSION::MAJOR > 2 || (Rails::VERSION::MAJOR == 2 && Rails::VERSION::MINOR >= 3)
+        ACTIVE_RECORD_DESCENDANTS_METHOD = :self_and_descendants_from_active_record
+      else
+        ACTIVE_RECORD_DESCENDANTS_METHOD = :self_and_descendents_from_active_record
+      end
+      
+
       attr_reader :class_name, :columns, :record_class, :table_name
       
       # Provides information necessary to insert STI classes correctly for
@@ -36,13 +43,13 @@ module Dataset
       
       def id_finder_names
         @id_finder_names ||= begin
-          names = record_class.self_and_descendents_from_active_record.collect {|c| finder_name c}
+          names = record_class.send(ACTIVE_RECORD_DESCENDANTS_METHOD).collect {|c| finder_name c}
           names.uniq.collect {|n| "#{n}_id".to_sym}
         end
       end
       
       def model_finder_names
-        @record_finder_names ||= record_class.self_and_descendents_from_active_record.collect {|c| finder_name(c).pluralize.to_sym}.uniq
+        @record_finder_names ||= record_class.send(ACTIVE_RECORD_DESCENDANTS_METHOD).collect {|c| finder_name(c).pluralize.to_sym}.uniq
       end
       
       def to_s
